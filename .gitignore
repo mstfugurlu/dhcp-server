@@ -1,0 +1,6 @@
+*.exe
+*.db
+*.db-journal
+config.json
+.env
+.DS_Store

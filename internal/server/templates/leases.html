@@ -1,0 +1,56 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="flex justify-between items-center mb-4">
+    <h1>Leases</h1>
+    <form method="GET" class="flex gap-2">
+        <select name="scope" onchange="this.form.submit()">
+            <option value="">All Scopes</option>
+            {{range .Scopes}}
+            <option value="{{.ID}}" {{if eq .ID $.SelectedScope}}selected{{end}}>{{.Name}}</option>
+            {{end}}
+        </select>
+    </form>
+</div>
+
+<div class="card">
+    {{if .Leases}}
+    <table>
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>MAC Address</th>
+                <th>Hostname</th>
+                <th>Expires</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Leases}}
+            <tr>
+                <td><strong>{{.IP}}</strong></td>
+                <td><code>{{.MAC}}</code></td>
+                <td>{{if .Hostname}}{{.Hostname}}{{else}}<span class="text-muted">-</span>{{end}}</td>
+                <td>{{.ExpiresAt.Format "2006-01-02 15:04:05"}}</td>
+                <td>
+                    {{if .ExpiresAt.After $.Now}}
+                    <span class="badge badge-success">Active</span>
+                    {{else}}
+                    <span class="badge badge-warning">Expired</span>
+                    {{end}}
+                </td>
+                <td>
+                    <form method="POST" action="/api/leases/{{.ID}}" style="display:inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Release this lease?')">Release</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="text-muted">No leases found.</p>
+    {{end}}
+</div>
+{{end}}

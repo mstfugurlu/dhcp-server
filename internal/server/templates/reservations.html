@@ -1,0 +1,62 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="flex justify-between items-center mb-4">
+    <h1>Reservations</h1>
+    <form method="GET" class="flex gap-2">
+        <select name="scope" onchange="this.form.submit()">
+            <option value="">All Scopes</option>
+            {{range .Scopes}}
+            <option value="{{.ID}}" {{if eq .ID $.SelectedScope}}selected{{end}}>{{.Name}}</option>
+            {{end}}
+        </select>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-title">Add Reservation</div>
+    <form method="POST" class="flex gap-2 items-center" style="flex-wrap: wrap;">
+        <input type="text" name="ip" placeholder="IP Address" required style="width: 150px;">
+        <input type="text" name="mac" placeholder="MAC Address" required style="width: 180px;">
+        <input type="text" name="hostname" placeholder="Hostname (optional)" style="width: 150px;">
+        <input type="text" name="description" placeholder="Description (optional)" style="width: 200px;">
+        <button type="submit" class="btn">Add</button>
+    </form>
+</div>
+
+<div class="card">
+    {{if .Reservations}}
+    <table>
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>MAC Address</th>
+                <th>Hostname</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Reservations}}
+            <tr>
+                <td><strong>{{.IP}}</strong></td>
+                <td><code>{{.MAC}}</code></td>
+                <td>{{if .Hostname}}{{.Hostname}}{{else}}<span class="text-muted">-</span>{{end}}</td>
+                <td>{{if .Description}}{{.Description}}{{else}}<span class="text-muted">-</span>{{end}}</td>
+                <td>{{.CreatedAt.Format "2006-01-02"}}</td>
+                <td>
+                    <form method="POST" style="display:inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="id" value="{{.ID}}">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this reservation?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="text-muted">No reservations found.</p>
+    {{end}}
+</div>
+{{end}}

@@ -1,0 +1,5 @@
+{
+    "server_ip": "10.72.102.1",
+    "web_port": 8080,
+    "db_path": "dhcp.db"
+}
